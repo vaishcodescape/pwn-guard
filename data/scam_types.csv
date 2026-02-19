@@ -1,0 +1,71 @@
+text,scam_type
+Your SBI account has been compromised. Verify your details at sbi-verify.fake.com,bank_phishing
+ALERT: Unauthorized access to your HDFC account. Update now: hdfc-update.com,bank_phishing
+"Dear customer, your bank account will be blocked. Click to verify: bank-verify.com",bank_phishing
+Urgent: Your ICICI credentials need verification. Login now: icici-secure.fake.com,bank_phishing
+Your bank card has been suspended. Reactivate: card-reactivate.com,bank_phishing
+Security alert: Unusual activity detected on your account. Verify identity now,bank_phishing
+Your net banking password expires today. Update immediately to continue services,bank_phishing
+Final warning: Your account will be closed unless you verify at bank-final.com,bank_phishing
+ATM card blocked due to suspicious activity. Unblock now: atm-unblock.com,bank_phishing
+Bank of India: Your account is under review. Submit documents: boi-docs.fake.com,bank_phishing
+"Your OTP is 654321. Share this to verify your payment of Rs.50,000",otp_scam
+"Transaction of Rs.25,000 initiated. Share OTP 123456 to cancel",otp_scam
+Paytm: Enter OTP 789012 to complete verification. Do not share with anyone,otp_scam
+Your WhatsApp OTP is 456789. Give this to our agent to restore your account,otp_scam
+"To block your stolen card, provide the OTP you just received",otp_scam
+Google Pay verification: Share the code we sent to confirm your identity,otp_scam
+Amazon order requires OTP verification. Tell us the code to process delivery,otp_scam
+"PhonePe: Your OTP for Rs.10,000 transfer is pending. Confirm with code",otp_scam
+URGENT: Share OTP immediately to stop unauthorized transaction,otp_scam
+Your Netflix OTP: 234567. Provide to customer care to fix billing issue,otp_scam
+Earn $5000/week working from home! No experience needed. Apply now,job_fraud
+"Part-time job offer: Make Rs.50,000 monthly. Just 2 hours work daily",job_fraud
+Data entry job: Earn $100/hour from home. No interview required,job_fraud
+Hiring! Work from home and earn $3000 weekly. Simple typing tasks,job_fraud
+"Exclusive job offer from Google. Salary $200,000. Reply with resume",job_fraud
+Amazon hiring for remote positions. $50/hour guaranteed. Register now,job_fraud
+"Work from anywhere! Earn Rs.1,00,000 monthly. Registration fee: Rs.500",job_fraud
+Online job opportunity: $500/day for simple surveys. No experience needed,job_fraud
+Attention job seekers! Immediate hiring. High salary. No qualification required,job_fraud
+MNC company hiring freshers. Package: Rs.50 LPA. Apply with fee of Rs.1000,job_fraud
+Double your Bitcoin in 24 hours! Guaranteed returns. Invest now,crypto_scam
+You've received 0.5 BTC! Claim at crypto-claim.com before it expires,crypto_scam
+"Elon Musk is giving away Ethereum! Send 0.1 ETH, get 1 ETH back",crypto_scam
+"New cryptocurrency launching. Invest $100, get $10,000 in 30 days",crypto_scam
+"Bitcoin trading bot: 500% returns daily. No risk, guaranteed profit",crypto_scam
+Crypto airdrop: Free 1 BTC for first 1000 users. Register now,crypto_scam
+NFT giveaway! Free valuable NFT. Just connect your wallet,crypto_scam
+Blockchain investment opportunity. 10x returns in 1 week. Act now!,crypto_scam
+Your Coinbase account suspended. Verify at coinbase-verify.fake.com,crypto_scam
+Binance security alert: Claim your free crypto before account closure,crypto_scam
+"CONGRATULATIONS! You've won $1,000,000 in the international lottery!",lottery_scam
+"You are the lucky winner of Rs.50,00,000 in KBC Kaun Banega Crorepati",lottery_scam
+Your number selected for prize of Rs.25 lakhs. Claim now!,lottery_scam
+WINNER! iPhone 15 Pro Max is yours. Just pay shipping fee,lottery_scam
+Lucky draw winner! You've won a Mercedes Benz. Contact to claim,lottery_scam
+Congratulations! Selected for Rs.1 crore prize. Send Aadhar to verify,lottery_scam
+"MEGA JACKPOT! You won $500,000. Pay processing fee to receive",lottery_scam
+Diwali bumper: Your ticket won Rs.10 lakhs. Claim immediately,lottery_scam
+"BBC international lottery: You won £850,000. Reply with bank details",lottery_scam
+Toyota car lottery winner! You won a new Fortuner. Claim at lottery-claim.com,lottery_scam
+"Pre-approved loan of Rs.10,00,000 at 0% interest. Apply now!",loan_scam
+"Instant loan approved! Get Rs.5,00,000 in 5 minutes. No documents needed",loan_scam
+Low credit score? Get loan anyway! Guaranteed approval. Apply today,loan_scam
+Personal loan at just 1% interest. No security required. Fast approval,loan_scam
+URGENT: Your loan application approved. Pay processing fee to receive,loan_scam
+Government scheme: Interest-free loan for all. Limited time offer,loan_scam
+Loan settlement offer: Pay 50% and clear your entire loan. Act now,loan_scam
+"Bad credit? No problem! Get $50,000 loan instantly. Apply here",loan_scam
+Home loan at 0% down payment. No income proof needed. Apply now,loan_scam
+Student loan forgiveness: Clear your debt for just $500. Limited offer,loan_scam
+Your computer has a virus! Call Microsoft support immediately,other
+IRS notice: You owe taxes. Pay now or face arrest,other
+Your package is stuck in customs. Pay $50 to release,other
+Install this app to get free mobile recharge forever,other
+Nigerian prince needs help transferring $10 million,other
+Your social security number has been compromised. Call now,other
+Hot singles in your area want to meet you! Click here,other
+Free vacation to Maldives! Just complete this survey,other
+Weight loss miracle: Lose 30 pounds in 1 week. Order now,other
+Psychic reading: I see great fortune in your future. Call now,other

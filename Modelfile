@@ -1,0 +1,7 @@
+# Modelfile for Ollama (scam baiting bot).
+# To build: ollama create sarah -f Modelfile
+# Or use: FROM sarah:latest
+
+PARAMETER stop <|start_header_id|>
+PARAMETER stop <|end_header_id|>
+PARAMETER stop <|eot_id|>

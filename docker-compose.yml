@@ -1,0 +1,29 @@
+# Local or VM deployment: docker-compose up --build
+# API: http://localhost:8000  Docs: http://localhost:8000/docs
+# Ollama: http://localhost:11434
+
+services:
+  api:
+    build: .
+    ports:
+      - "${PORT:-8000}:8000"
+      - "11434:11434"  # Ollama port
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - API_VERSION=1.0.0
+      - OLLAMA_HOST=0.0.0.0:11434
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s  # Increased for Ollama startup
+    restart: unless-stopped
+    # Increase memory limit for Ollama (3B model needs ~4-6GB RAM)
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
