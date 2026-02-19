@@ -190,7 +190,7 @@ First run may download `sarah.gguf` (~2–3GB); later runs use cache.
 
 ---
 
-## Contributing (open source)
+## Contributing  
 
 We welcome contributions. Here’s how to get started.
 
@@ -250,10 +250,6 @@ python -m training.train_scam_type
 ### 7. Code of conduct
 
 - Be respectful and constructive. This project aims to be inclusive and harassment-free.
-
-### 8. License
-
-- By contributing, you agree that your contributions will be licensed under the same license as the project (see [LICENSE](LICENSE)).
 
 ---
 
