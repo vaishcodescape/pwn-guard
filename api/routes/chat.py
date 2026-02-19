@@ -29,7 +29,9 @@ async def chat_respond(request: ChatRequest):
     bot = chat_sessions[request.session_id]
     result = bot.generate_response(request.scammer_message)
 
-    scam_type = result.get("scam_analysis", {}).get("scam_type", "unknown")
+    scam_type = result.get("scam_analysis", {}).get("scam_type", "unknown") if isinstance(result.get("scam_analysis"), dict) else "unknown"
+    if not isinstance(scam_type, str):
+        scam_type = str(scam_type) if scam_type is not None else "unknown"
 
     tips = []
     if scam_type == "otp_scam":
@@ -43,11 +45,11 @@ async def chat_respond(request: ChatRequest):
 
     return ChatResponse(
         victim_response=result.get("response") or "(Message detected as genuine — no response needed)",
-        persona=result["persona"],
-        mode=result["mode"],
+        persona=result.get("persona", "Unknown"),
+        mode=result.get("mode", "unknown"),
         scam_type=scam_type,
-        turn=result["turn"],
-        extracted_intel=result["extracted_intel"],
+        turn=result.get("turn", 0),
+        extracted_intel=result.get("extracted_intel", {}),
         tips=tips
     )
 

@@ -807,13 +807,17 @@ class ScamBaitingBot:
         is_spam, spam_confidence = is_spam_message(scammer_message, SPAM_THRESHOLD, metadata)
         
         if not is_spam:
-            # This is a genuine message - don't respond
+            # This is a genuine message - don't respond (return full shape for API)
             return {
                 'response': None,
                 'is_spam': False,
                 'spam_confidence': spam_confidence,
                 'message': 'Message detected as genuine - no response needed',
-                'turn': self.turn_count
+                'turn': self.turn_count,
+                'persona': self.persona.name if self.persona else 'Unknown',
+                'mode': self.mode.value if self.mode else 'unknown',
+                'scam_analysis': {'scam_type': 'unknown'},
+                'extracted_intel': getattr(self, 'extracted_intel', {'urls': [], 'phone_numbers': [], 'organizations': [], 'email_addresses': []}),
             }
         
         # It's spam/scam - engage!

@@ -6,6 +6,7 @@ Applies a rule-based override when fraud indicators are strong but the model say
 """
 
 import time
+from concurrent.futures import ThreadPoolExecutor
 from fastapi import APIRouter, HTTPException
 
 from api.schemas import MessageRequest, AnalysisResponse
@@ -14,6 +15,8 @@ from core.risk_engine import calculate_risk_score
 from extraction.preprocess import preprocess_message
 from extraction.features import extract_features
 from extraction.extract_intel import extract_threat_intelligence
+
+_EXECUTOR = ThreadPoolExecutor(max_workers=2, thread_name_prefix="analyze")
 
 router = APIRouter(tags=["Analysis"])
 
@@ -53,15 +56,17 @@ async def analyze_message(request: MessageRequest):
     metadata = {"sender": request.sender, "channel": request.channel}
 
     preprocessed = preprocess_message(text, metadata)
-    features = extract_features(text)
+    # Run feature and intel extraction in parallel (both CPU-bound, independent)
+    future_features = _EXECUTOR.submit(extract_features, text)
+    future_intel = _EXECUTOR.submit(extract_threat_intelligence, text)
+    features = future_features.result()
+    threat_intel = future_intel.result()
 
     X_spam = ModelCache.spam_vectorizer.transform([preprocessed["processed_text"]])
-    spam_pred = ModelCache.spam_model.predict(X_spam)[0]
     spam_proba_arr = ModelCache.spam_model.predict_proba(X_spam)[0]
     spam_proba = float(spam_proba_arr[1])
 
     is_spam = spam_proba >= SPAM_THRESHOLD
-    threat_intel = extract_threat_intelligence(text)
 
     is_spam, spam_confidence = _should_override_to_spam(
         is_spam, spam_proba, threat_intel
@@ -73,7 +78,8 @@ async def analyze_message(request: MessageRequest):
     scam_confidence = None
     if is_spam and ModelCache.scam_model is not None:
         X_scam = ModelCache.scam_vectorizer.transform([preprocessed["processed_text"]])
-        scam_type = ModelCache.scam_model.predict(X_scam)[0]
+        raw_scam_type = ModelCache.scam_model.predict(X_scam)[0]
+        scam_type = str(raw_scam_type) if raw_scam_type is not None else None
         scam_proba_arr = ModelCache.scam_model.predict_proba(X_scam)[0]
         scam_confidence = float(max(scam_proba_arr))
 

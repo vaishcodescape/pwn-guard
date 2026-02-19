@@ -16,7 +16,7 @@ async def list_personas():
                 "name": v.name,
                 "age": v.age,
                 "occupation": v.occupation,
-                "background": v.background[:100] + "..."
+                "background": (bg[:100] + "...") if len(bg := (v.background or "")) > 100 else bg
             }
             for k, v in PERSONAS.items()
         }

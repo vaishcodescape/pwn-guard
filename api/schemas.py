@@ -5,18 +5,17 @@ from pydantic import BaseModel, Field
 
 
 class MessageRequest(BaseModel):
-    text: str = Field(..., description="Message text to analyze")
+    text: str = Field(..., description="Message text to analyze", min_length=1, max_length=100_000)
     sender: Optional[str] = Field(None, description="Sender identifier")
     channel: Optional[str] = Field(None, description="Channel (sms, email, etc)")
 
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "text": "URGENT! You won $1,000,000! Click http://fakeprize.com NOW!",
-                "sender": "+91-9876543210",
-                "channel": "sms"
-            }
+    model_config = {"json_schema_extra": {
+        "example": {
+            "text": "URGENT! You won $1,000,000! Click http://fakeprize.com NOW!",
+            "sender": "+91-9876543210",
+            "channel": "sms"
         }
+    }}
 
 
 class AnalysisResponse(BaseModel):
@@ -81,4 +80,6 @@ class ChatResponse(BaseModel):
     scam_type: str
     turn: int
     extracted_intel: dict
-    tips: list
+    tips: list[str] = Field(default_factory=list, description="Safety tips for the user")
+
+    model_config = {"json_schema_extra": {"example": {"victim_response": "...", "persona": "Ramesh", "mode": "naive_victim", "scam_type": "otp_scam", "turn": 1, "extracted_intel": {}, "tips": ["Never share OTP"]}}}

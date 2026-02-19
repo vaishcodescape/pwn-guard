@@ -1,6 +1,6 @@
-# Spam & Fraud Detection REST API
+# Pwn-Guard
 
-''A production-style REST API for spam detection, scam classification, threat intelligence extraction, rule-based escalation simulation, and risk scoring. Built to run on CPU-only infrastructure (Docker, deployed on [Render](https://render.com)).
+**Spam & fraud detection REST API** — production-ready service for message analysis, scam classification, threat intelligence extraction, and risk scoring. Runs on CPU-only infrastructure (Docker, [Render](https://render.com)).
 
 ---
 
@@ -12,37 +12,37 @@
 | **Backend** | Python 3.10+, FastAPI, Pydantic |
 | **ML/NLP** | scikit-learn (TF-IDF, Logistic Regression), spaCy NER, custom feature pipelines |
 | **Infra** | Docker, docker-compose, Render; optional Ollama/LLM locally |
-| **Implementation** | REST API design, ML model training & serving, text preprocessing, NER, rule-based systems, containerization, cloud deployment |
-
----
-
-## What this project demonstrates
-
-- **End-to-end ML pipeline:** Trainable spam and scam-type classifiers, served via a single `/analyze_message` endpoint with confidence scores and processing-time metrics.
-- **Structured threat extraction:** URLs, phone numbers, money amounts, organization names, and action phrases (spaCy NER + custom logic).
-- **Risk and operations:** Configurable risk scoring (0–100), recommended actions, and rule-based escalation simulation (offline, no LLM dependency for core flow).
-- **Production readiness:** Health/readiness probes, Docker images (with and without Ollama), deployed on Render, env-based configuration.
-
-### Architecture
-
-<p align="center">
-  <img src="dupe-bot-architecture.png" alt="Dupe-Bot architecture diagram" width="1100" />
-</p>
-
+| **Implementation** | REST API, ML training & serving, text preprocessing, NER, rule-based escalation, containerization |
 
 ---
 
 ## Features
 
 - **Spam detection** — TF-IDF + Logistic Regression; returns `is_spam` and confidence.
-- **Scam type classification** — bank_phishing, otp_scam, job_fraud, crypto_scam, lottery_scam, loan_scam, other.
-- **Threat intelligence** — URLs, phone numbers, money amounts, org names (spaCy NER), action phrases.
+- **Scam type classification** — `bank_phishing`, `otp_scam`, `job_fraud`, `crypto_scam`, `lottery_scam`, `loan_scam`, `other`.
+- **Threat intelligence** — URLs, phone numbers, money amounts, org names (spaCy NER), action phrases and indicators.
+- **Risk score (0–100)** and **recommended action** with detailed guidance.
 - **Rule-based escalation simulation** — Offline simulation of N conversation turns (no LLM).
-- **Risk score (0–100)** and **recommended action** with details.
+- **Scam baiting chat** — Optional LLM-powered victim persona for engaging scammers and extracting intel (Ollama).
 
 ---
 
-## Quick start (run locally)
+## Architecture
+
+<p align="center">
+  <img src="pwn-guard architecture.png" alt="Pwn-Guard architecture diagram" width="900" />
+</p>
+
+- **API layer:** FastAPI routes for health, analyze, simulation, reports, reference, and chat.
+- **Core:** Model loading, risk engine, rule-based escalation simulator.
+- **Extraction:** Preprocessing, features, threat intel (spaCy NER + custom logic).
+- **Optional:** Ollama for scam-baiting chat; Docker/Render for deployment.
+
+---
+
+## Quick start
+
+### Local run
 
 ```bash
 # Install
@@ -57,22 +57,27 @@ python -m training.train_scam_type
 uvicorn api.main:app --host 127.0.0.1 --port 8000
 ```
 
-- **API:** http://127.0.0.1:8000  
-- **Docs:** http://127.0.0.1:8000/docs  
-- **Health:** http://127.0.0.1:8000/health | **Ready:** http://127.0.0.1:8000/ready  
+| Link | URL |
+|------|-----|
+| **API** | http://127.0.0.1:8000 |
+| **Docs (Swagger)** | http://127.0.0.1:8000/docs |
+| **Health** | http://127.0.0.1:8000/health |
+| **Ready** | http://127.0.0.1:8000/ready |
 
 ---
 
 ## API endpoints
 
 | Endpoint | Method | Description |
-|----------|--------|-------------|
+|----------|--------|--------------|
+| `/` | GET | Service info and model status |
 | `/health` | GET | Liveness probe |
 | `/ready` | GET | Readiness (models loaded) |
 | `/analyze_message` | POST | Full analysis: spam, scam type, intel, risk score, recommended action |
 | `/simulate_escalation` | POST | Rule-based scam escalation (offline, no LLM) |
 | `/risk_report` | GET | Last analysis risk report |
 | `/personas`, `/scam_types` | GET | Reference data |
+| `/chat/start`, `/chat/respond`, `/chat/summary`, `/chat/end/{id}` | POST/GET/DELETE | Scam baiting chat (optional Ollama) |
 
 ### Example: analyze a message
 
@@ -86,9 +91,9 @@ uvicorn api.main:app --host 127.0.0.1 --port 8000
 }
 ```
 
-Response includes: `is_spam`, `spam_confidence`, `scam_type`, `scam_confidence`, `risk_score`, `risk_level`, `recommended_action`, `action_details`, `threat_intelligence` (urls, phones, money_amounts, organizations, threat_indicators), `features`, `processing_time_ms`.
+Response includes: `is_spam`, `spam_confidence`, `scam_type`, `scam_confidence`, `risk_score`, `risk_level`, `recommended_action`, `action_details`, `threat_intelligence`, `features`, `processing_time_ms`.
 
-### Example: simulate escalation (offline, rule-based)
+### Example: simulate escalation
 
 **POST /simulate_escalation**
 
@@ -106,40 +111,37 @@ Returns a list of escalation turns with `phase` and `scammer_message` (no extern
 
 ## Docker
 
-The Docker image can include:
-- **Ollama** server for local LLM inference (optional).
-- **Sarah model** (3B) from [Hugging Face](https://huggingface.co/Het0456/sarah), auto-downloaded.
-- FastAPI server for spam/scam detection.
-
-### Build and run
+### Build and run (API only)
 
 ```bash
-docker build -t spam-api .
-docker run -p 8000:8000 -p 11434:11434 spam-api
+docker build -t pwn-guard-api .
+docker run -p 8000:8000 pwn-guard-api
 ```
 
-First run downloads sarah.gguf (~2–3GB); later runs use cache.
-
-### With docker-compose (recommended)
+### With Ollama (scam baiting chat)
 
 ```bash
 docker-compose up --build
 ```
 
-- Starts Ollama on port 11434, imports sarah, runs FastAPI on port 8000.  
-- **Memory:** sarah needs ~4–6GB RAM; give Docker at least 8GB.
+- Starts Ollama on port 11434, imports Sarah (3B) from [Hugging Face](https://huggingface.co/Het0456/sarah), runs FastAPI on 8000.
+- **Memory:** allow Docker at least 8GB (Sarah needs ~4–6GB).
 
-- API: http://localhost:8000 | Ollama: http://localhost:11434
+| Service | URL |
+|---------|-----|
+| API | http://localhost:8000 |
+| Ollama | http://localhost:11434 |
+
+First run may download `sarah.gguf` (~2–3GB); later runs use cache.
 
 ---
 
-## Deployed on Render
+## Deployment
 
-The API is deployed on [Render](https://render.com). Use **/health** and **/ready** for health checks in your service configuration. The `Dockerfile.cloudrun` image (no Ollama) is suitable for Render’s Web Service.
+- **Render:** Use `/health` and `/ready` for health checks. Prefer `Dockerfile.cloudrun` (no Ollama) for Web Services.
+- **Other:** Set env vars below; CPU-only, no GPU required.
 
----
-
-## Environment variables
+### Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -153,26 +155,26 @@ The API is deployed on [Render](https://render.com). Use **/health** and **/read
 ## Project structure
 
 ```
-├── config.py              # Paths and env config
-├── api/                   # API layer
-│   ├── main.py            # FastAPI app
-│   ├── schemas.py         # Pydantic models
-│   └── routes/            # Health, analyze, simulation, reports, chat, reference
-├── core/                  # Business logic
-│   ├── model_loader.py    # Load/cache spam & scam models
-│   ├── risk_engine.py     # Risk score & recommendations
+├── config.py                 # Paths and env config
+├── api/
+│   ├── main.py               # FastAPI app, lifespan, routers
+│   ├── schemas.py            # Pydantic request/response models
+│   └── routes/               # health, analyze, simulation, reports, chat, reference
+├── core/
+│   ├── model_loader.py       # Load/cache spam & scam models
+│   ├── risk_engine.py        # Risk score & recommendations
 │   └── escalation_simulator.py  # Rule-based escalation (offline)
-├── extraction/            # Text & threat intel
-│   ├── preprocess.py
-│   ├── features.py
-│   └── extract_intel.py
-├── bots/                  # Conversational agents
-│   └── scam_baiting_bot.py  # LLM-powered scam baiting
-├── training/              # Model training
+├── extraction/
+│   ├── preprocess.py         # Text normalization
+│   ├── features.py           # Feature extraction
+│   └── extract_intel.py      # Threat intel (spaCy NER + rules)
+├── bots/
+│   └── scam_baiting_bot.py   # LLM-powered scam baiting (Ollama)
+├── training/
 │   ├── train_spam.py
 │   └── train_scam_type.py
-├── data/                  # Training data
-├── models/                # Trained model artifacts
+├── data/                     # Training data (CSV)
+├── models/                   # Trained artifacts (.joblib)
 ├── Dockerfile
 ├── Dockerfile.cloudrun
 ├── docker-compose.yml
@@ -183,5 +185,78 @@ The API is deployed on [Render](https://render.com). Use **/health** and **/read
 
 ## Requirements
 
-- Python 3.10+
-- CPU only (no GPU required)
+- **Python** 3.10+
+- **CPU only** (no GPU required)
+
+---
+
+## Contributing (open source)
+
+We welcome contributions. Here’s how to get started.
+
+### 1. Fork and clone
+
+- Fork the repository on GitHub.
+- Clone your fork locally:
+  ```bash
+  git clone https://github.com/YOUR_USERNAME/pwn-guard.git
+  cd pwn-guard
+  ```
+
+### 2. Set up the environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+python -m training.train_spam
+python -m training.train_scam_type
+```
+
+### 3. Create a branch
+
+- Do not commit directly to `main`.
+- Create a branch for your change:
+  ```bash
+  git checkout -b feature/your-feature-name
+  # or: fix/issue-description
+  ```
+
+### 4. Make your changes
+
+- Follow existing code style (e.g. type hints, docstrings, clear names).
+- Prefer small, focused commits.
+- If you add dependencies, add them to `requirements.txt` with versions where appropriate.
+
+### 5. Test locally
+
+- Run the API and hit the endpoints you changed:
+  ```bash
+  uvicorn api.main:app --reload
+  ```
+- Manually test or add/run tests if the project has a test suite.
+
+### 6. Submit a pull request
+
+- Push your branch to your fork:
+  ```bash
+  git push origin feature/your-feature-name
+  ```
+- Open a **Pull Request** against the upstream `main` branch.
+- In the PR description, explain what changed and why; reference any issues (e.g. “Fixes #123”).
+- Be responsive to review feedback.
+
+### 7. Code of conduct
+
+- Be respectful and constructive. This project aims to be inclusive and harassment-free.
+
+### 8. License
+
+- By contributing, you agree that your contributions will be licensed under the same license as the project (see [LICENSE](LICENSE)).
+
+---
+
+## License
+
+See [LICENSE](LICENSE) in this repository.

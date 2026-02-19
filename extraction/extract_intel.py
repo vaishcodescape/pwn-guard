@@ -6,14 +6,17 @@ fraud-specific signals (suspicious URLs, impersonation, credential pressure).
 """
 
 import re
+import threading
 from urllib.parse import urlparse
 
 try:
     import spacy
-    NLP = None
+    NLP_LIB = spacy
 except ImportError:
-    spacy = None
-    NLP = None
+    NLP_LIB = None
+
+NLP = None
+_nlp_lock = threading.Lock()
 
 # Trusted domains (lowercase); others can be flagged as suspicious when combined with scam language
 TRUSTED_DOMAIN_KEYWORDS = (
@@ -82,11 +85,17 @@ ACTION_PHRASES = {
 
 
 def get_nlp():
-    """Lazy load spaCy model."""
+    """Lazy load spaCy model (thread-safe)."""
     global NLP
-    if NLP is None and spacy is not None:
+    if NLP is not None:
+        return NLP if NLP is not False else None
+    if NLP_LIB is None:
+        return None
+    with _nlp_lock:
+        if NLP is not None:
+            return NLP if NLP is not False else None
         try:
-            NLP = spacy.load("en_core_web_sm")
+            NLP = NLP_LIB.load("en_core_web_sm")
         except OSError:
             print(
                 "Warning: spaCy model not found. Run: python -m spacy download en_core_web_sm"
