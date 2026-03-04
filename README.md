@@ -85,8 +85,8 @@ uvicorn api.main:app --host 127.0.0.1 --port 8000
 
 ```json
 {
-  "text": "URGENT! Your SBI account is blocked. Verify at http://sbi-fake.com. Call +91-xxxxxxxxxx",
-  "sender": "+91-xxxxxxxxxx",
+  "text": "URGENT! Your Bank account is blocked. Verify at http://chase-fake.com. Call +xx-xxxxxxxxxx",
+  "sender": "+xx-xxxxxxxxxx",
   "channel": "sms"
 }
 ```
@@ -101,7 +101,7 @@ Response includes: `is_spam`, `spam_confidence`, `scam_type`, `scam_confidence`,
 {
   "scam_type": "bank_phishing",
   "num_turns": 5,
-  "initial_message": "Your SBI account is blocked. Verify at http://sbi-fake.com"
+  "initial_message": "Your chase account is blocked. Verify at http://chase-fake.com"
 }
 ```
 
